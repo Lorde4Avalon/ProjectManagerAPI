@@ -1,0 +1,31 @@
+version: "3"
+services:
+  pm:
+    container_name: pm
+    build: .
+    image: pm_image
+    ports:
+      - "6666:8080"
+    restart: always
+    depends_on:
+      - mysqldb
+    links:
+      - "mysqldb:mysqldb"
+    environment:
+      - TZ=Asia/Shanghai
+
+  mysqldb:
+    container_name: pm_mysqldb
+    image: mysql:8.0.27
+    command: [
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci',
+        '--default-time-zone=+8:00'
+    ]
+    restart: always
+    volumes:
+      - ./db:/var/lib/mysql
+
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=pm
