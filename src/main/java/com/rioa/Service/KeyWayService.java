@@ -1,2 +1,5 @@
-package com.rioa.Service;public class KeyWayService {
+package com.rioa.Service;
+
+public class KeyWayService {
+
 }

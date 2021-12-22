@@ -8,10 +8,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
 public class TestController {
     @GetMapping ("/test")
-    public String test(Authentication authentication) throws UsernameNotFoundException {
+    public String test(Authentication authentication){
         return "Hello World!!!" + authentication.getName();
+    }
+
+    @GetMapping ("/test/1")
+    public String testInvite(Authentication authentication)  {
+        return "Hi! You get the permission!!!" + authentication.getName();
+    }
+
+    @GetMapping ("/test/2")
+    public String test1(Authentication authentication)  {
+        return "Hi! You get the permission!!!" + authentication.getAuthorities();
     }
 }
