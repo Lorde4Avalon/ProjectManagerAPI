@@ -21,12 +21,4 @@ public class LoginController {
         return user;
     }
 
-
-    @GetMapping("/api/current_user")
-    public User currentUser(Authentication authentication) {
-        User user = userRepository.findUserByUsername(authentication.getName()).get();
-        user.setPassword("");
-        return user;
-    }
-
 }

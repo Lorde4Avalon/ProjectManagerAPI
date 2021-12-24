@@ -31,6 +31,7 @@ public class User {
     private String password;
 
     @Column
+    @JsonIgnore
     private LocalDateTime dateTime = LocalDateTime.now();
 
     //Authentication
@@ -42,6 +43,7 @@ public class User {
     private String roles;
     //task
     @Column(name = "tasks")
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Task> tasks = new ArrayList<>();
 }

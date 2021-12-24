@@ -21,12 +21,23 @@ public class Task {
     private String taskName;
 
     @Column
+    @JsonIgnore
     private Integer priority;
 
+    private String afterTask;
+
+    private String continueTime;
+
+    private String startTime;
+
+    private String createPeople;
+
+    private String executePeople;
 
 
 
     @Column(name = "dates")
+    @JsonIgnore
     private LocalDateTime dateTime = LocalDateTime.now();
 
     //user part
