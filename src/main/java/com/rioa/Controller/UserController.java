@@ -1,10 +1,8 @@
 package com.rioa.Controller;
 
 import com.rioa.Pojo.Task;
-import com.rioa.Pojo.TaskUserRole;
 import com.rioa.Pojo.User;
 import com.rioa.dao.TaskRepository;
-import com.rioa.dao.TaskUserRoleRepository;
 import com.rioa.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +22,6 @@ public class UserController {
     @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired
-    private TaskUserRoleRepository taskUserRoleRepository;
-
     @GetMapping("current_user")
     public User currentUser(Authentication authentication) {
         User user = userRepository.findUserByUsername(authentication.getName()).get();
@@ -34,7 +29,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping("invite")
+    @PostMapping("invite")
     public void inviteUser(@RequestParam String username,
                            @RequestParam Long taskId) {
         if (userRepository.findUserByUsername(username).isEmpty()
@@ -43,10 +38,7 @@ public class UserController {
         }
         User user = userRepository.findUserByUsername(username).get();
         Task task = taskRepository.findById(taskId).get();
-        TaskUserRole taskUserRole = new TaskUserRole();
-        taskUserRole.setUser(user);
-        taskUserRole.setTask(task);
-        taskUserRole.setPermission("write");
-        taskUserRoleRepository.save(taskUserRole);
+        task.getUsers().add(user);
+        taskRepository.save(task);
     }
 }

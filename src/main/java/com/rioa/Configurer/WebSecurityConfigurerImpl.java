@@ -28,7 +28,7 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .mvcMatchers("/api/**").hasRole("USER")
                 .mvcMatchers("/test").hasRole("USER")
-                .antMatchers("/test/1").hasRole("GUEST")
+                //.antMatchers("/test/1").hasRole("GUEST")
                 .anyRequest().permitAll()
                 .and()
                 .logout()

@@ -1,10 +1,8 @@
 package com.rioa.Controller;
 
 import com.rioa.Pojo.Task;
-import com.rioa.Pojo.TaskUserRole;
 import com.rioa.Pojo.User;
 import com.rioa.dao.TaskRepository;
-import com.rioa.dao.TaskUserRoleRepository;
 import com.rioa.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,9 +24,6 @@ public class TaskController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private TaskUserRoleRepository taskUserRoleRepository;
-
     @PostMapping("new")
     public Map<String, Long> addTask(@Valid @RequestBody Task task,
                        Authentication authentication) {
@@ -47,12 +42,9 @@ public class TaskController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         var task = taskRepository.findById(id).get();
-        var permission = taskUserRoleRepository.findAllByUserAndTask(user, task)
-                .map(x -> x.getPermission())
-                .orElse("");
         if (!(
                 Objects.equals(task.getUser().getId(), user.getId())
-            || (permission.equals("read") || permission.equals("write"))
+            || task.getUsers().contains(user)
         )) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -84,13 +76,13 @@ public class TaskController {
     }
 
     //get all isolate user
-    @GetMapping("{id}")
+    @GetMapping("{id}/invites")
     public List<User> getAllInvitedUser(@PathVariable Long id) {
         if (taskRepository.findById(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         Task task = taskRepository.findById(id).get();
 
-        return taskUserRoleRepository.findAllByTask(task).stream().map(x -> x.getUser()).collect(Collectors.toList());
+        return new ArrayList<>(task.getUsers());
     }
 }

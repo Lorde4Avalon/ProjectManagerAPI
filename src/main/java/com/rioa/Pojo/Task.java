@@ -5,6 +5,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -24,7 +26,8 @@ public class Task {
     @JsonIgnore
     private Integer priority;
 
-    private String afterTask;
+    @Column(name = "afterId")
+    private Long afterTask;
 
     private String continueTime;
 
@@ -34,6 +37,14 @@ public class Task {
 
     private String executePeople;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "taskUser",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonIgnore
+    private Set<User> users = new HashSet<>();
 
 
     @Column(name = "dates")
