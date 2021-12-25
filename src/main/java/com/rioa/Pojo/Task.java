@@ -13,7 +13,6 @@ import java.util.Set;
 @Table(name = "task")
 public class Task {
     @Id
-    @JsonIgnore
     @Column(name = "taskId")
     @GeneratedValue(generator = "task_seq", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "task_seq", sequenceName = "task_seq", allocationSize = 1)
@@ -23,8 +22,7 @@ public class Task {
     private String taskName;
 
     @Column
-    @JsonIgnore
-    private Integer priority;
+    private String status;
 
     @Column(name = "afterId")
     private Long afterTask;
@@ -37,7 +35,7 @@ public class Task {
 
     private String executePeople;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.DETACH , fetch = FetchType.EAGER)
     @JoinTable(
             name = "taskUser",
             joinColumns = @JoinColumn(name = "task_id"),
@@ -56,4 +54,14 @@ public class Task {
     @JsonIgnore
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    public void copyOf(Task task) {
+        this.taskName = task.getTaskName();
+        this.status = task.getStatus();
+        this.afterTask = task.getAfterTask();
+        this.continueTime = task.getContinueTime();
+        this.startTime = task.getStartTime();
+        this.createPeople = task.getCreatePeople();
+        this.executePeople = task.getExecutePeople();
+    }
 }

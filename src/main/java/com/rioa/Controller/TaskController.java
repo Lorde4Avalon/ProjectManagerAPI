@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/task")
@@ -34,6 +33,27 @@ public class TaskController {
         return Collections.singletonMap("id", task.getId());
     }
 
+    @PutMapping("{id}")
+    public void updateTask(@PathVariable Long id,
+                           @Valid @RequestBody Task task,
+                           Authentication authentication) {
+        if (taskRepository.findById(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        Task oldTask = taskRepository.findById(id).get();
+        User user = userRepository.findUserByUsername(authentication.getName()).get();
+
+        if (!(
+                Objects.equals(oldTask.getUser().getId(), user.getId())
+                        || oldTask.getUsers().contains(user)
+        )) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        oldTask.copyOf(task);
+        taskRepository.save(oldTask);
+    }
+
     @GetMapping("{id}")
     private Task getTaskById(@PathVariable Long id, Authentication authentication) {
         User user = userRepository.findUserByUsername(
@@ -52,11 +72,15 @@ public class TaskController {
     }
 
     @GetMapping("search")
-    private List<Task> getTask(@RequestParam String username) {
+    private List<Task> getTask(@RequestParam String username,
+                               Authentication authentication) {
         if (userRepository.findUserByUsername(username).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return taskRepository.findAllByUser(userRepository.findUserByUsername(username).get());
+
+        User user = userRepository.findUserByUsername(authentication.getName()).get();
+
+        return taskRepository.findAllByUsersContainsOrUser(user, user);
     }
 
     @DeleteMapping("{id}")

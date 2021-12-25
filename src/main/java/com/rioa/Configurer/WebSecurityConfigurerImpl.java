@@ -22,6 +22,8 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService);
     }
 
+    @Autowired
+    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
     //Authorization (What you can do ?)
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,7 +40,8 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable().headers().frameOptions().disable()
                 .and()
-                .httpBasic();
+                .httpBasic()
+                .authenticationEntryPoint(authenticationEntryPoint);
     }
 
     @Bean

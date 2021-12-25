@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/user")
@@ -39,6 +40,22 @@ public class UserController {
         User user = userRepository.findUserByUsername(username).get();
         Task task = taskRepository.findById(taskId).get();
         task.getUsers().add(user);
+        taskRepository.save(task);
+    }
+
+    @PostMapping("invite/del")
+    public void delInviteUser(@RequestParam String username,
+                           @RequestParam Long taskId) {
+        if (userRepository.findUserByUsername(username).isEmpty()
+                || taskRepository.findById(taskId).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        User user = userRepository.findUserByUsername(username).get();
+        Task task = taskRepository.findById(taskId).get();
+        Set<User> n_users = task.getUsers();
+        n_users.remove(user);
+        task.setUsers(n_users);
+
         taskRepository.save(task);
     }
 }
