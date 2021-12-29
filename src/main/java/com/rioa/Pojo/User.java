@@ -22,6 +22,7 @@ public class User {
 
     @Column(name = "username")
     @NotBlank
+    @Pattern(regexp = ".{2,32}")
     private String username;
 
     @Column(name = "password")
@@ -35,6 +36,7 @@ public class User {
 
     //Authentication
     @Column
+    @JsonIgnore
     private boolean isActive;
 
     @Column

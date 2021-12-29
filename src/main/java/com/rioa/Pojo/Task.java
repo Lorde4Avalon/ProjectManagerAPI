@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +21,8 @@ public class Task {
     private Long id;
 
     @Column(name = "taskName")
+    @NotBlank
+    @Pattern(regexp = ".{64,}")
     private String taskName;
 
     @Column
@@ -29,8 +33,10 @@ public class Task {
 
     private String continueTime;
 
+    @Pattern(regexp = "[0-9]{4,}-[0-9]{2,}-[0-9]{2,}")
     private String startTime;
 
+    @NotBlank
     private String createPeople;
 
     private String executePeople;
