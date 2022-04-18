@@ -9,6 +9,6 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - docker
 
 ## Next Target
-- add Redis cache
-- restructure security paty by JWT
+- add Redis cache to implement user login forbidden time limitation
+- restructure security part by JWT
 - add logs
