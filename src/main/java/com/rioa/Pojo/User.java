@@ -18,21 +18,21 @@ public class User {
     @Column(name = "userId")
     @GeneratedValue(generator = "user_seq", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
-    private Long id;
+    private Long userId;
 
     @Column(name = "username")
-    @NotBlank
-    @Pattern(regexp = ".{2,32}")
+    @NotBlank(message = "Username is required")
+    @Pattern(regexp = "^[a-zA-Z0-9]{4,20}$", message = "Username must be 4-20 characters long and contain only letters and numbers")
     private String username;
 
     @Column(name = "password")
-    @NotBlank
-    @Pattern(regexp = ".{8,}")
+    @NotBlank(message = "Password is required")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z]).{8,}$", message = "Password must be at least 8 characters long and contain at least one lowercase letter,one number")
     private String password;
 
     @Column
     @JsonIgnore
-    private LocalDateTime dateTime = LocalDateTime.now();
+    private LocalDateTime userCreateDate = LocalDateTime.now();
 
     //Authentication
     @Column

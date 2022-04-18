@@ -18,11 +18,11 @@ public class Task {
     @Column(name = "taskId")
     @GeneratedValue(generator = "task_seq", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "task_seq", sequenceName = "task_seq", allocationSize = 1)
-    private Long id;
+    private Long taskId;
 
     @Column(name = "taskName")
     @NotBlank
-    @Pattern(regexp = ".{64,}")
+    @Pattern(regexp = "^[a-zA-Z0-9]{1,100}$", message = "Task name must be alphanumeric, number and less than 100 characters")
     private String taskName;
 
     @Column
