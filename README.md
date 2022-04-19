@@ -7,6 +7,7 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - springboot, spring security
 - mysql
 - docker
+- Redis
 
 ## Next Target
 - add Redis cache to implement user login forbidden time limitation
