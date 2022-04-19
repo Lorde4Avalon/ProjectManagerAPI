@@ -30,7 +30,7 @@ public class TaskController {
                                     authentication.getName()).get();
         task.setUser(user);
         taskRepository.save(task);
-        return Collections.singletonMap("id", task.getId());
+        return Collections.singletonMap("id", task.getTaskId());
     }
 
     @PutMapping("{id}")
@@ -44,7 +44,7 @@ public class TaskController {
         User user = userRepository.findUserByUsername(authentication.getName()).get();
 
         if (!(
-                Objects.equals(oldTask.getUser().getId(), user.getId())
+                Objects.equals(oldTask.getUser().getUserId(), user.getUserId())
                         || oldTask.getUsers().contains(user)
         )) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -63,7 +63,7 @@ public class TaskController {
         }
         var task = taskRepository.findById(id).get();
         if (!(
-                Objects.equals(task.getUser().getId(), user.getId())
+                Objects.equals(task.getUser().getUserId(), user.getUserId())
             || task.getUsers().contains(user)
         )) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -93,7 +93,7 @@ public class TaskController {
         Task oldTask = taskRepository.findById(id).get();
 
         if (oldTask.getUser() != userRepository.findUserByUsername(authentication.getName()).get()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't delete this task");
         }
 
         taskRepository.deleteById(id);
@@ -103,7 +103,7 @@ public class TaskController {
     @GetMapping("{id}/invites")
     public List<User> getAllInvitedUser(@PathVariable Long id) {
         if (taskRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task not found");
         }
         Task task = taskRepository.findById(id).get();
 

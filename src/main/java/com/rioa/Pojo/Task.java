@@ -25,16 +25,25 @@ public class Task {
     @Pattern(regexp = "^[a-zA-Z0-9]{1,100}$", message = "Task name must be alphanumeric, number and less than 100 characters")
     private String taskName;
 
-    @Column
+    @Column(name = "status")
     private String status;
 
-    @Column(name = "afterId")
-    private Long afterTask;
+//    @Column(name = "afterId")
+//    private Long afterTask;
 
-    private String continueTime;
 
-    @Pattern(regexp = "[0-9]{4,}-[0-9]{2,}-[0-9]{2,}")
-    private String startTime;
+    //timeline
+    @Column(name = "startTime")
+    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Start time must be in format yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startTime = LocalDateTime.now();
+
+    @Column(name = "endTime")
+    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "End time must be in format yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endTime;
+
+    //description
+    @Column(name = "description")
+    private String description;
 
     @NotBlank
     private String createPeople;
@@ -51,10 +60,6 @@ public class Task {
     private Set<User> users = new HashSet<>();
 
 
-    @Column(name = "dates")
-    @JsonIgnore
-    private LocalDateTime dateTime = LocalDateTime.now();
-
     //user part
     @ManyToOne
     @JsonIgnore
@@ -64,9 +69,6 @@ public class Task {
     public void copyOf(Task task) {
         this.taskName = task.getTaskName();
         this.status = task.getStatus();
-        this.afterTask = task.getAfterTask();
-        this.continueTime = task.getContinueTime();
-        this.startTime = task.getStartTime();
         this.createPeople = task.getCreatePeople();
         this.executePeople = task.getExecutePeople();
     }

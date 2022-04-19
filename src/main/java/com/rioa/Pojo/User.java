@@ -30,6 +30,18 @@ public class User {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z]).{8,}$", message = "Password must be at least 8 characters long and contain at least one lowercase letter,one number")
     private String password;
 
+    @Column(name = "email")
+    @NotBlank(message = "Email is required")
+    @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "Email must be valid")
+    private String email;
+
+    @Column(name = "avatarPath")
+    private String avatarPath;
+
+    @Column(name = "nickname")
+    @Pattern(regexp = "^[a-zA-Z0-9]{4,20}$", message = "Nickname must be 4-20 characters long and contain only letters and numbers")
+    private String nickname;
+
     @Column
     @JsonIgnore
     private LocalDateTime userCreateDate = LocalDateTime.now();

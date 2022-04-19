@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "project")
 public class Project {
     @Id
-    @Column(name = "project_id")
+    @Column(name = "projectId")
     @GeneratedValue(generator = "project_id_seq", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "project_id_seq", sequenceName = "project_id_seq", allocationSize = 1)
     private Long projectId;
@@ -23,7 +23,6 @@ public class Project {
     private String projectName;
 
     @Column(name = "project_description")
-    @NotBlank(message = "Project description is required")
     private String projectDescription;
 
     @Column(name = "project_status")
@@ -45,4 +44,16 @@ public class Project {
     @Column(name = "project_updated_date")
     @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project updated date must be in the format yyyy-MM-dd HH:mm:ss")
     private LocalDateTime projectUpdatedDate;
+
+    public void copyOf(Project project) {
+        this.projectId = project.getProjectId();
+        this.projectName = project.getProjectName();
+        this.projectDescription = project.getProjectDescription();
+        this.projectStatus = project.getProjectStatus();
+        this.projectStartDate = project.getProjectStartDate();
+        this.projectEndDate = project.getProjectEndDate();
+        this.projectManager = project.getProjectManager();
+        this.projectCreatedDate = project.getProjectCreatedDate();
+        this.projectUpdatedDate = project.getProjectUpdatedDate();
+    }
 }

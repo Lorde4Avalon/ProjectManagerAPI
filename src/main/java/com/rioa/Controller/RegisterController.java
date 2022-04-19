@@ -26,7 +26,7 @@ public class RegisterController {
     @PostMapping("/register")
     public Map<String, String> registerUser(@Valid @RequestBody User user) {
         if(userRepository.findUserByUsername(user.getUsername()).isPresent()) {
-            throw new  ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new  ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
         }
         user.setPassword(encoder.encode(user.getPassword()));
         user.setActive(true);
