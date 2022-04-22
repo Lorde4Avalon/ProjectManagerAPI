@@ -40,12 +40,12 @@ public class JwtAuthenticationController {
     }
 
     @PostMapping(value = "/register")
-    public void registerUser(@Valid @RequestBody UserDTO user) throws ResponseStatusException {
-        if (userDetailsService.loadUserByUsername(user.getUsername()) != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
-        }
-
-        userDetailsService.save(user);
+    public void registerUser(@Valid @RequestBody UserDTO userDTO) throws ResponseStatusException {
+//        //check if user already exists
+//        if (userDetailsService.loadUserByUsername(userDTO.getUsername()) != null) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
+//        }
+        userDetailsService.save(userDTO);
     }
 
 

@@ -26,7 +26,7 @@ public class TaskController {
     @PostMapping("new")
     public Map<String, Long> addTask(@Valid @RequestBody Task task,
                        Authentication authentication) {
-        User user = userRepository.findUserByUsername(
+        User user = userRepository.findByUsername(
                                     authentication.getName()).get();
         task.setUser(user);
         taskRepository.save(task);
@@ -41,7 +41,7 @@ public class TaskController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         Task oldTask = taskRepository.findById(id).get();
-        User user = userRepository.findUserByUsername(authentication.getName()).get();
+        User user = userRepository.findByUsername(authentication.getName()).get();
 
         if (!(
                 Objects.equals(oldTask.getUser().getUserId(), user.getUserId())
@@ -56,7 +56,7 @@ public class TaskController {
 
     @GetMapping("{id}")
     private Task getTaskById(@PathVariable Long id, Authentication authentication) {
-        User user = userRepository.findUserByUsername(
+        User user = userRepository.findByUsername(
                 authentication.getName()).get();
         if (taskRepository.findById(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -74,11 +74,11 @@ public class TaskController {
     @GetMapping("search")
     private List<Task> getTask(@RequestParam String username,
                                Authentication authentication) {
-        if (userRepository.findUserByUsername(username).isEmpty()) {
+        if (userRepository.findByUsername(username).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        User user = userRepository.findUserByUsername(authentication.getName()).get();
+        User user = userRepository.findByUsername(authentication.getName()).get();
 
         return taskRepository.findAllByUsersContainsOrUser(user, user);
     }
@@ -92,7 +92,7 @@ public class TaskController {
         }
         Task oldTask = taskRepository.findById(id).get();
 
-        if (oldTask.getUser() != userRepository.findUserByUsername(authentication.getName()).get()) {
+        if (oldTask.getUser() != userRepository.findByUsername(authentication.getName()).get()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't delete this task");
         }
 

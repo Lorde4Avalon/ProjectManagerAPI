@@ -31,7 +31,6 @@ public class User {
     private String password;
 
     @Column(name = "email")
-    @NotBlank(message = "Email is required")
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "Email must be valid")
     private String email;
 

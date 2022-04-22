@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("current_user")
     public User currentUser(Authentication authentication) {
-        User user = userRepository.findUserByUsername(authentication.getName()).get();
+        User user = userRepository.findByUsername(authentication.getName()).get();
         user.setPassword("");
         return user;
     }
@@ -33,11 +33,11 @@ public class UserController {
     @PostMapping("invite")
     public void inviteUser(@RequestParam String username,
                            @RequestParam Long taskId) {
-        if (userRepository.findUserByUsername(username).isEmpty()
+        if (userRepository.findByUsername(username).isEmpty()
             || taskRepository.findById(taskId).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        User user = userRepository.findUserByUsername(username).get();
+        User user = userRepository.findByUsername(username).get();
         Task task = taskRepository.findById(taskId).get();
         task.getUsers().add(user);
         taskRepository.save(task);
@@ -46,11 +46,11 @@ public class UserController {
     @PostMapping("invite/del")
     public void delInviteUser(@RequestParam String username,
                            @RequestParam Long taskId) {
-        if (userRepository.findUserByUsername(username).isEmpty()
+        if (userRepository.findByUsername(username).isEmpty()
                 || taskRepository.findById(taskId).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        User user = userRepository.findUserByUsername(username).get();
+        User user = userRepository.findByUsername(username).get();
         Task task = taskRepository.findById(taskId).get();
         Set<User> n_users = task.getUsers();
         n_users.remove(user);
