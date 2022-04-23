@@ -46,6 +46,14 @@ public class User {
     @JsonIgnore
     private LocalDateTime userCreateDate = LocalDateTime.now();
 
+    @Column
+    @JsonIgnore
+    private String roles;
+
+//    @Column
+//    @JsonIgnore
+//    private boolean isActive;
+
     //task
     @Column(name = "tasks")
     @JsonIgnore

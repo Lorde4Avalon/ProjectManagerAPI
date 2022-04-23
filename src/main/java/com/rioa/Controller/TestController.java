@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestController {
-    @GetMapping ("/test")
+    @GetMapping ("/test/admin")
     public String test(Authentication authentication){
-        return "Hello World!!!" + authentication.getName();
+        return "Hello ADMIN!!! " + authentication.getName();
     }
 
     @GetMapping ("/test/1")
     public String testInvite(Authentication authentication)  {
-        return "Hi! You get the permission!!!" + authentication.getName();
+        return "Hi! You get the permission!!! " + authentication.getName();
     }
 
     @GetMapping ("/test/2")
     public String test1(Authentication authentication)  {
-        return "Hi! You get the permission!!!" + authentication.getAuthorities();
+        return "Hi! You get the permission!!! " + authentication.getAuthorities();
     }
 }

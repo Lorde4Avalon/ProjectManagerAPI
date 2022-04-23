@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
@@ -26,6 +27,9 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
     //Authorization (What you can do ?)
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -33,10 +37,14 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
                 // dont authenticate this particular request
                 .authorizeRequests().antMatchers("/authenticate", "/register").permitAll()
                 // all other requests need to be authenticated
-                .anyRequest().authenticated().and()
+                .antMatchers("/test/admin").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and()
                 // make sure we use stateless session; session won't be used to store user's state.
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
