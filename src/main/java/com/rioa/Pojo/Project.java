@@ -1,11 +1,15 @@
 package com.rioa.Pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -35,7 +39,16 @@ public class Project {
     private String projectEndDate;
 
     @Column(name = "project_manager")
-    private String projectManager;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "project_manager_id", nullable = false)
+    private User projectManager;
+
+    @Column(name = "invite_code")
+    @JsonIgnore
+    private String inviteCode = UUID.randomUUID().toString().substring(0, 6);
+
+
 
     @Column(name = "project_created_date")
     @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project created date must be in the format yyyy-MM-dd HH:mm:ss")
@@ -44,6 +57,12 @@ public class Project {
     @Column(name = "project_updated_date")
     @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project updated date must be in the format yyyy-MM-dd HH:mm:ss")
     private LocalDateTime projectUpdatedDate;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "project_user",
+            joinColumns = @JoinColumn(name = "projectId"),
+            inverseJoinColumns = @JoinColumn(name = "userId"))
+    private List<User> users;
 
     public void copyOf(Project project) {
         this.projectId = project.getProjectId();
@@ -55,5 +74,6 @@ public class Project {
         this.projectManager = project.getProjectManager();
         this.projectCreatedDate = project.getProjectCreatedDate();
         this.projectUpdatedDate = project.getProjectUpdatedDate();
+        this.users = project.getUsers();
     }
 }
