@@ -59,4 +59,10 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Task> tasks = new ArrayList<>();
+
+    //project
+    @Column(name = "projects")
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Project> projects = new ArrayList<>();
 }

@@ -64,6 +64,9 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "userId"))
     private List<User> users;
 
+    @OneToMany(mappedBy = "project_id", cascade = CascadeType.ALL)
+    private List<Task> tasks;
+
     public void copyOf(Project project) {
         this.projectId = project.getProjectId();
         this.projectName = project.getProjectName();
@@ -75,5 +78,6 @@ public class Project {
         this.projectCreatedDate = project.getProjectCreatedDate();
         this.projectUpdatedDate = project.getProjectUpdatedDate();
         this.users = project.getUsers();
+        this.tasks = project.getTasks();
     }
 }

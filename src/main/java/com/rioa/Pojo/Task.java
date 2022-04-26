@@ -52,7 +52,7 @@ public class Task {
 
     @ManyToMany(cascade = CascadeType.DETACH , fetch = FetchType.EAGER)
     @JoinTable(
-            name = "taskUser",
+            name = "task_user",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
@@ -66,10 +66,22 @@ public class Task {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
+    //project part
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "projectId", nullable = false)
+    private Project project;
+
     public void copyOf(Task task) {
         this.taskName = task.getTaskName();
         this.status = task.getStatus();
         this.createPeople = task.getCreatePeople();
         this.executePeople = task.getExecutePeople();
+        this.description = task.getDescription();
+        this.startTime = task.getStartTime();
+        this.endTime = task.getEndTime();
+        this.users = task.getUsers();
+        this.user = task.getUser();
+        this.project = task.getProject();
     }
 }
