@@ -11,8 +11,13 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - Redis
 - JWT
 
+## Database E-R graphic
+![db](https://user-images.githubusercontent.com/74342663/165480208-5b462184-8642-4e6a-b7b2-3e604dbc5fe7.png)
+
+
 ## Next Target
 - add Redis cache to implement user login forbidden time limitation
 - add logs
 - add swagger
 - add responeEntity
+
