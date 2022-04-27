@@ -17,8 +17,8 @@ import java.util.UUID;
 public class Project {
     @Id
     @Column(name = "projectId")
-    @GeneratedValue(generator = "project_id_seq", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "project_id_seq", sequenceName = "project_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "project_seq", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "project_seq", sequenceName = "project_seq", allocationSize = 1)
     private Long projectId;
 
     @Column(name = "project_name")
@@ -38,9 +38,9 @@ public class Project {
     @Column(name = "project_end_date")
     private String projectEndDate;
 
-    @Column(name = "project_manager")
+
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_manager_id", nullable = false)
     private User projectManager;
 
@@ -64,7 +64,9 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "userId"))
     private List<User> users;
 
-    @OneToMany(mappedBy = "project_id", cascade = CascadeType.ALL)
+    @Column(name = "tasks")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     private List<Task> tasks;
 
     public void copyOf(Project project) {

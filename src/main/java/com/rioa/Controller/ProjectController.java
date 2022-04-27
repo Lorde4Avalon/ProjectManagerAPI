@@ -30,6 +30,9 @@ public class ProjectController {
     public Map<String, Long> createProject(@Valid @RequestBody Project project,
                                            Authentication authentication){
         project.setProjectManager(userRepository.findByUsername(authentication.getName()).get());
+        List<User> users = project.getUsers();
+        users.add(project.getProjectManager());
+        project.setUsers(users);
         projectRepository.save(project);
         return Collections.singletonMap("id", project.getProjectId());
     }
@@ -93,22 +96,35 @@ public class ProjectController {
         return projectRepository.findAllByProjectManagerOrUsers(authenticatedUser, authenticatedUser);
     }
 
-    //generate invite code
-    @GetMapping("/get/invite/generate/{id}")
-    public String getInviteCode(@PathVariable Long id, Authentication authentication) {
-        if (projectRepository.findByProjectId(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+    //get all manage project
+    @GetMapping("/get/manage")
+    public List<Project> getAllManageProject(@RequestParam String username,
+                                             Authentication authentication) {
+        if (userRepository.findByUsername(username).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
-        Project project = projectRepository.findByProjectId(id).get();
 
-        if (!project.getProjectManager().equals(authenticatedUser)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to get this project");
-        }
-
-        return project.getInviteCode();
+        return projectRepository.findAllByProjectManager(authenticatedUser);
     }
+
+    //generate invite code
+//    @GetMapping("/get/invite/generate/{id}")
+//    public String getInviteCode(@PathVariable Long id, Authentication authentication) {
+//        if (projectRepository.findByProjectId(id).isEmpty()) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+//        }
+//
+//        User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
+//        Project project = projectRepository.findByProjectId(id).get();
+//
+//        if (!project.getProjectManager().equals(authenticatedUser)) {
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to get this project");
+//        }
+//
+//        return project.getInviteCode();
+//    }
 
     //invite user
     @PostMapping("/get/invite/{id}")
@@ -133,9 +149,25 @@ public class ProjectController {
         projectRepository.save(project);
     }
 
-    //get all users in project not including project manager
-    @GetMapping("/get/users/{id}")
-    public List<User> getUsers(@PathVariable Long id, Authentication authentication) {
+    //invite user by invite code
+    @PostMapping("/get/invite/code")
+    public void inviteUserByInviteCode(@RequestParam String inviteCode, Authentication authentication) {
+        if (projectRepository.findByInviteCode(inviteCode).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+        }
+
+        User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
+        Project project = projectRepository.findByInviteCode(inviteCode).get();
+
+
+
+        project.getUsers().add(authenticatedUser);
+        projectRepository.save(project);
+    }
+
+    //delete invite user
+    @DeleteMapping("/get/invite/{id}")
+    public void deleteInviteUser(@PathVariable Long id, @RequestParam String username, Authentication authentication) {
         if (projectRepository.findByProjectId(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
         }
@@ -147,7 +179,33 @@ public class ProjectController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the project manager");
         }
 
-        return project.getUsers();
+        if (userRepository.findByUsername(username).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invite user not found");
+        }
+
+        User user = userRepository.findByUsername(username).get();
+        project.getUsers().remove(user);
+        projectRepository.save(project);
+    }
+
+    //get all users in project including project manager
+    @GetMapping("/get/users/{id}")
+    public List<User> getUsers(@PathVariable Long id, Authentication authentication) {
+        if (projectRepository.findByProjectId(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+        }
+
+        User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
+        Project project = projectRepository.findByProjectId(id).get();
+
+        if (!project.getUsers().contains(authenticatedUser)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the project manager or a user in the project");
+        }
+
+        List<User> users = project.getUsers();
+        users.remove(authenticatedUser);
+
+        return users;
     }
 
 }

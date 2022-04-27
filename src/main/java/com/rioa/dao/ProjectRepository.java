@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> findByProjectId(Long projectId);
     List<Project> findAllByProjectManagerOrUsers(User manager, User user);
+    Optional<Project> findByInviteCode(String inviteCode);
+    List<Project> findAllByProjectManager(User manager);
 }

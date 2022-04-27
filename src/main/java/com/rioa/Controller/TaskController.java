@@ -2,6 +2,7 @@ package com.rioa.Controller;
 
 import com.rioa.Pojo.Task;
 import com.rioa.Pojo.User;
+import com.rioa.dao.ProjectRepository;
 import com.rioa.dao.TaskRepository;
 import com.rioa.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class TaskController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @PostMapping("new")
     public Map<String, Long> addTask(@Valid @RequestBody Task task,
