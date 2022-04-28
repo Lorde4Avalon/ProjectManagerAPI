@@ -12,7 +12,8 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - JWT
 
 ## Database E-R graphic
-![db](https://user-images.githubusercontent.com/74342663/165480208-5b462184-8642-4e6a-b7b2-3e604dbc5fe7.png)
+![db](https://user-images.githubusercontent.com/74342663/165729919-229b3e82-0dc5-4daf-9e96-12bf5c0e90b9.png)
+
 
 
 ## Next Target
@@ -20,4 +21,4 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - add logs
 - add swagger
 - add responeEntity
-
+- implement upload avatar
