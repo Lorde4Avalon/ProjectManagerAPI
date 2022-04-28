@@ -12,10 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/project")
@@ -30,18 +27,18 @@ public class ProjectController {
     public Map<String, Long> createProject(@Valid @RequestBody Project project,
                                            Authentication authentication){
         project.setProjectManager(userRepository.findByUsername(authentication.getName()).get());
-        List<User> users = project.getUsers();
+        Set<User> users = project.getUsers();
         users.add(project.getProjectManager());
         project.setUsers(users);
         projectRepository.save(project);
-        return Collections.singletonMap("id", project.getProjectId());
+        return Collections.singletonMap("project_id", project.getProjectId());
     }
 
     @PutMapping("/update/{id}")
     public void updateProject(@Valid @RequestBody Project project, @PathVariable Long id,
                               Authentication authentication){
         if (projectRepository.findByProjectId(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
         Project oldProject = projectRepository.findByProjectId(id).get();
@@ -58,7 +55,7 @@ public class ProjectController {
     @DeleteMapping("/delete/{id}")
     public void deleteProject(@PathVariable Long id, Authentication authentication){
         if (projectRepository.findByProjectId(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
         Project project = projectRepository.findByProjectId(id).get();
@@ -71,7 +68,7 @@ public class ProjectController {
     @GetMapping("/get/{id}")
     public Project getProject(@PathVariable Long id, Authentication authentication){
         if (projectRepository.findByProjectId(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
@@ -83,12 +80,12 @@ public class ProjectController {
         return projectRepository.findByProjectId(id).get();
     }
 
-    //get all isolate
+    //get all isolate projects
     @GetMapping("/get/all")
     public List<Project> getAllProject(@RequestParam String username,
                                        Authentication authentication) {
         if (userRepository.findByUsername(username).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
@@ -101,7 +98,7 @@ public class ProjectController {
     public List<Project> getAllManageProject(@RequestParam String username,
                                              Authentication authentication) {
         if (userRepository.findByUsername(username).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
@@ -130,7 +127,7 @@ public class ProjectController {
     @PostMapping("/get/invite/{id}")
     public void inviteUser(@PathVariable Long id, @RequestParam String username, Authentication authentication) {
         if (projectRepository.findByProjectId(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
@@ -141,7 +138,7 @@ public class ProjectController {
         }
 
         if (userRepository.findByUsername(username).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invite user not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invite user not found");
         }
 
         User user = userRepository.findByUsername(username).get();
@@ -153,7 +150,7 @@ public class ProjectController {
     @PostMapping("/get/invite/code")
     public void inviteUserByInviteCode(@RequestParam String inviteCode, Authentication authentication) {
         if (projectRepository.findByInviteCode(inviteCode).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
@@ -169,7 +166,7 @@ public class ProjectController {
     @DeleteMapping("/get/invite/{id}")
     public void deleteInviteUser(@PathVariable Long id, @RequestParam String username, Authentication authentication) {
         if (projectRepository.findByProjectId(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
@@ -180,7 +177,7 @@ public class ProjectController {
         }
 
         if (userRepository.findByUsername(username).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invite user not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invite user not found");
         }
 
         User user = userRepository.findByUsername(username).get();
@@ -190,9 +187,9 @@ public class ProjectController {
 
     //get all users in project including project manager
     @GetMapping("/get/users/{id}")
-    public List<User> getUsers(@PathVariable Long id, Authentication authentication) {
+    public Set<User> getUsers(@PathVariable Long id, Authentication authentication) {
         if (projectRepository.findByProjectId(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
@@ -202,8 +199,7 @@ public class ProjectController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the project manager or a user in the project");
         }
 
-        List<User> users = project.getUsers();
-        users.remove(authenticatedUser);
+        Set<User> users = project.getUsers();
 
         return users;
     }

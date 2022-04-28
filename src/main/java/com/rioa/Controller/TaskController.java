@@ -1,5 +1,6 @@
 package com.rioa.Controller;
 
+import com.rioa.Pojo.Project;
 import com.rioa.Pojo.Task;
 import com.rioa.Pojo.User;
 import com.rioa.dao.ProjectRepository;
@@ -27,84 +28,107 @@ public class TaskController {
     @Autowired
     private ProjectRepository projectRepository;
 
-    @PostMapping("new")
+    @PostMapping("/create")
     public Map<String, Long> addTask(@Valid @RequestBody Task task,
+                       @RequestParam Long projectId,
                        Authentication authentication) {
-        User user = userRepository.findByUsername(
+        User authenticateUser = userRepository.findByUsername(
                                     authentication.getName()).get();
-        task.setUser(user);
+        Optional<Project> project = projectRepository.findById(projectId);
+        if (project.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
+        }
+
+        task.setTaskOwner(authenticateUser);
+        task.getUsers().add(authenticateUser);
+        task.setProject(project.get());
         taskRepository.save(task);
-        return Collections.singletonMap("id", task.getTaskId());
+        return Collections.singletonMap("task_id", task.getTaskId());
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/update/{id}")
     public void updateTask(@PathVariable Long id,
+                           @RequestParam Long projectId,
                            @Valid @RequestBody Task task,
                            Authentication authentication) {
+        if (projectRepository.findById(projectId).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
+        }
+        User projectManager = projectRepository.findById(projectId).get().getProjectManager();
+        User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
+        // Check if the user is the project manager or the task Owner
+        if (!(  Objects.equals(projectManager.getUserId(), authenticateUser.getUserId()) ||
+                Objects.equals(task.getTaskOwner().getUserId(), authenticateUser.getUserId())
+        )) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to update this task");
+        }
+
         if (taskRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
         }
         Task oldTask = taskRepository.findById(id).get();
-        User user = userRepository.findByUsername(authentication.getName()).get();
-
-        if (!(
-                Objects.equals(oldTask.getUser().getUserId(), user.getUserId())
-                        || oldTask.getUsers().contains(user)
-        )) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
 
         oldTask.copyOf(task);
         taskRepository.save(oldTask);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/get/{id}")
     private Task getTaskById(@PathVariable Long id, Authentication authentication) {
-        User user = userRepository.findByUsername(
-                authentication.getName()).get();
+        User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
         if (taskRepository.findById(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         var task = taskRepository.findById(id).get();
+        // Check if the user is the project manager or the task Owner or a user of the task
         if (!(
-                Objects.equals(task.getUser().getUserId(), user.getUserId())
-            || task.getUsers().contains(user)
+                Objects.equals(task.getTaskOwner().getUserId(), authenticateUser.getUserId()) ||
+                task.getUsers().contains(authenticateUser) ||
+                Objects.equals(task.getProject().getProjectManager().getUserId(), authenticateUser.getUserId())
         )) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to view this task");
         }
         return task;
     }
 
-    @GetMapping("search")
-    private List<Task> getTask(@RequestParam String username,
-                               Authentication authentication) {
-        if (userRepository.findByUsername(username).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    //get all tasks of a project
+    @GetMapping("/get/{projectId}")
+    private List<Task> getTaskByProjectId(@PathVariable Long projectId, Authentication authentication) {
+        User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
+        if (projectRepository.findById(projectId).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
+        }
+        Project project = projectRepository.findById(projectId).get();
+        // Check if the user is the project manager or a user of the project
+        if (!( Objects.equals(project.getProjectManager().getUserId(), authenticateUser.getUserId()) ||
+                project.getUsers().contains(authenticateUser)
+        )) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to view this project");
         }
 
-        User user = userRepository.findByUsername(authentication.getName()).get();
-
-        return taskRepository.findAllByUsersContainsOrUser(user, user);
+        return taskRepository.findAllByProject(project);
     }
 
-    @DeleteMapping("{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @DeleteMapping("/delete/{id}")
     private void deleteTask(@PathVariable Long id,
                             Authentication authentication) {
         if (taskRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task not found");
         }
+        User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
         Task oldTask = taskRepository.findById(id).get();
 
-        if (oldTask.getUser() != userRepository.findByUsername(authentication.getName()).get()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't delete this task");
+        // Check if the user is the project manager or the task Owner
+        if (!( Objects.equals(oldTask.getTaskOwner().getUserId(), authenticateUser.getUserId()) ||
+                Objects.equals(oldTask.getProject().getProjectManager().getUserId(), authenticateUser.getUserId())
+        )) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to delete this task");
         }
 
         taskRepository.deleteById(id);
     }
 
-    //get all isolate user
-    @GetMapping("{id}/invites")
+    //get all users of a task
+    @GetMapping("/get/users/{id}")
     public List<User> getAllInvitedUser(@PathVariable Long id) {
         if (taskRepository.findById(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task not found");

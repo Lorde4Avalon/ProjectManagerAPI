@@ -64,7 +64,7 @@ public class Task {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    private User taskOwner;
 
     //project part
     @ManyToOne
@@ -81,7 +81,7 @@ public class Task {
         this.startTime = task.getStartTime();
         this.endTime = task.getEndTime();
         this.users = task.getUsers();
-        this.user = task.getUser();
+        this.taskOwner = task.getTaskOwner();
         this.project = task.getProject();
     }
 }

@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -32,13 +33,6 @@ public class Project {
     @Column(name = "project_status")
     private String projectStatus;
 
-    @Column(name = "project_start_date")
-    private String projectStartDate;
-
-    @Column(name = "project_end_date")
-    private String projectEndDate;
-
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_manager_id", nullable = false)
@@ -51,18 +45,23 @@ public class Project {
 
 
     @Column(name = "project_created_date")
-    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project created date must be in the format yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime projectCreatedDate;
+    @JsonIgnore
+    private LocalDateTime projectCreatedDate = LocalDateTime.now();
 
     @Column(name = "project_updated_date")
-    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project updated date must be in the format yyyy-MM-dd HH:mm:ss")
+    //@Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project updated date must be in the format yyyy-MM-dd HH:mm:ss")
     private LocalDateTime projectUpdatedDate;
+
+    @Column(name = "project_end_date")
+    //@Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project end date must be in the format yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime projectEndDate;
+
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "project_user",
             joinColumns = @JoinColumn(name = "projectId"),
             inverseJoinColumns = @JoinColumn(name = "userId"))
-    private List<User> users;
+    private Set<User> users = new HashSet<>();
 
     @Column(name = "tasks")
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
@@ -74,7 +73,6 @@ public class Project {
         this.projectName = project.getProjectName();
         this.projectDescription = project.getProjectDescription();
         this.projectStatus = project.getProjectStatus();
-        this.projectStartDate = project.getProjectStartDate();
         this.projectEndDate = project.getProjectEndDate();
         this.projectManager = project.getProjectManager();
         this.projectCreatedDate = project.getProjectCreatedDate();
