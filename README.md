@@ -12,7 +12,7 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - JWT
 
 ## Database E-R graphic
-![db](https://user-images.githubusercontent.com/74342663/165729919-229b3e82-0dc5-4daf-9e96-12bf5c0e90b9.png)
+![db](https://user-images.githubusercontent.com/74342663/166111271-bd809abe-4d7f-4af6-a619-1f1902557e12.png)
 
 
 
