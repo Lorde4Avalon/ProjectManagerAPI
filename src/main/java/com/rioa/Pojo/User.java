@@ -32,8 +32,9 @@ public class User {
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "Email must be valid")
     private String email;
 
-    @Column(name = "avatarPath")
-    private String avatarPath;
+    @Column(name = "avatar")
+    @Lob
+    private byte[] avatar;
 
     @Column(name = "nickname")
     @Pattern(regexp = "^[a-zA-Z0-9]{4,20}$", message = "Nickname must be 4-20 characters long and contain only letters and numbers")

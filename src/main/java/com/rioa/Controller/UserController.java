@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.io.IOException;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,34 +30,26 @@ public class UserController {
         return user;
     }
 
-    @PostMapping("invite")
-    public void inviteUser(@RequestParam String username,
-                           @RequestParam Long taskId) {
-        if (userRepository.findByUsername(username).isEmpty()
-            || taskRepository.findById(taskId).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        User user = userRepository.findByUsername(username).get();
-        Task task = taskRepository.findById(taskId).get();
-        task.getUsers().add(user);
-        taskRepository.save(task);
+    //post user avatar
+    @PostMapping("/avatar")
+    public String postAvatar(@RequestParam("image") MultipartFile multipartFile,
+                             Authentication authentication) throws IOException {
+        User user = userRepository.findByUsername(authentication.getName()).get();
+        System.out.println(multipartFile.getContentType());
+        user.setAvatar(multipartFile.getBytes());
+        userRepository.save(user);
+        return "success";
     }
 
-    @PostMapping("invite/del")
-    public void delInviteUser(@RequestParam String username,
-                           @RequestParam Long taskId) {
-        if (userRepository.findByUsername(username).isEmpty()
-                || taskRepository.findById(taskId).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    //get user avatar
+    @GetMapping("/avatar")
+    public byte[] getAvatar(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName()).get();
+
+        if (user.getAvatar() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Avatar not found");
         }
-        User user = userRepository.findByUsername(username).get();
-        Task task = taskRepository.findById(taskId).get();
-        Set<User> n_users = task.getUsers();
-        n_users.remove(user);
-        task.setUsers(n_users);
-
-        taskRepository.save(task);
+        return user.getAvatar();
     }
-
 
 }
