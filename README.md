@@ -1,7 +1,8 @@
 # ProjectManager
 ## Target
 It can sync multi users tasks at the same time.
-A manager can assgin different tasks for his teammates. And can supervise their process clearly and immediately.
+A manager can assgin different tasks for his teammates. And can supervise their process clearly and immediately.<br>
+**Only for learning**
 
 ## Tech Stacks
 - springboot
@@ -21,4 +22,3 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - add logs
 - add swagger
 - add responeEntity
-- implement upload avatar
