@@ -22,7 +22,8 @@ public class Task {
 
     @Column(name = "taskName")
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9]{1,100}$", message = "Task name must be alphanumeric, number and less than 100 characters")
+    //Pattern for match all language name and special characters
+    @Pattern(regexp = "^[a-zA-Z0-9\\s\\W].{1,100}$")
     private String taskName;
 
     @Column(name = "status")
@@ -34,21 +35,15 @@ public class Task {
 
     //timeline
     @Column(name = "startTime")
-    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Start time must be in format yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime = LocalDateTime.now();
 
     @Column(name = "endTime")
-    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "End time must be in format yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     //description
     @Column(name = "description")
     private String description;
 
-    @NotBlank
-    private String createPeople;
-
-    private String executePeople;
 
     @ManyToMany(cascade = CascadeType.DETACH , fetch = FetchType.EAGER)
     @JoinTable(
@@ -62,8 +57,7 @@ public class Task {
 
     //user part
     @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "userOwnerId", nullable = false)
     private User taskOwner;
 
     //project part
@@ -75,8 +69,6 @@ public class Task {
     public void copyOf(Task task) {
         this.taskName = task.getTaskName();
         this.status = task.getStatus();
-        this.createPeople = task.getCreatePeople();
-        this.executePeople = task.getExecutePeople();
         this.description = task.getDescription();
         this.startTime = task.getStartTime();
         this.endTime = task.getEndTime();

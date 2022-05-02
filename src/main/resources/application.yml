@@ -4,9 +4,14 @@ spring:
   main:
     allow-circular-references: true
 
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 server:
   error:
     include-message: ALWAYS
     include-stacktrace: NEVER
+
+
 
 

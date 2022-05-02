@@ -39,6 +39,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public User save(UserDTO userDTO) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
+        user.setNickname((userDTO.getUsername() + Math.random() * 1000).toString().substring(0, 10));
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         user.setRoles("ROLE_USER");
         return userRepository.save(user);

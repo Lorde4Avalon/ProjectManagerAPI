@@ -39,6 +39,11 @@ public class TaskController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
 
+        if (!Objects.equals(project.get().getProjectManager().getUserId(), authenticateUser.getUserId())
+        || !project.get().getUsers().contains(authenticateUser)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to add task to this project");
+        }
+
         task.setTaskOwner(authenticateUser);
         task.getUsers().add(authenticateUser);
         task.setProject(project.get());
@@ -91,8 +96,8 @@ public class TaskController {
     }
 
     //get all tasks of a project
-    @GetMapping("/get/{projectId}")
-    private List<Task> getTaskByProjectId(@PathVariable Long projectId, Authentication authentication) {
+    @GetMapping("/get/all")
+    private List<Task> getTaskByProjectId(@RequestParam Long projectId, Authentication authentication) {
         User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
         if (projectRepository.findById(projectId).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
@@ -130,10 +135,10 @@ public class TaskController {
     //get all users of a task
     @GetMapping("/get/users/{id}")
     public List<User> getAllInvitedUser(@PathVariable Long id) {
-        if (taskRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task not found");
+        if (taskRepository.findByTaskId(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
         }
-        Task task = taskRepository.findById(id).get();
+        Task task = taskRepository.findByTaskId(id).get();
 
         return new ArrayList<>(task.getUsers());
     }

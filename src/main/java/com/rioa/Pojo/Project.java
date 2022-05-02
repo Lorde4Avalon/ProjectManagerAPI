@@ -24,7 +24,7 @@ public class Project {
 
     @Column(name = "project_name")
     @NotBlank(message = "Project name is required")
-    @Pattern(regexp = "^[a-zA-Z0-9]{1,100}$", message = "Project name must be between 1 and 100 characters long and must not contain any special characters")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s\\W].{1,100}$", message = "Project name must be between 1 and 100 characters long and must not contain any special characters")
     private String projectName;
 
     @Column(name = "project_description")

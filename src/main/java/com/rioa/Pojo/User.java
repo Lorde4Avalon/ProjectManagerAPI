@@ -33,13 +33,14 @@ public class User {
     private String email;
 
     @Column(name = "avatar")
+    @JsonIgnore
     @Lob
     private byte[] avatar;
 
     @Column(name = "nickname")
     @Pattern(regexp = "^[a-zA-Z0-9]{4,20}$", message = "Nickname must be 4-20 characters long and contain only letters and numbers")
     //default value is username
-    private String nickname = username;
+    private String nickname;
 
     @Column
     @JsonIgnore
