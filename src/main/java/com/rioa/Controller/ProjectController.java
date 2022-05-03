@@ -49,6 +49,11 @@ public class ProjectController {
 
         oldProject.copyOf(project);
         oldProject.setProjectUpdatedDate(LocalDateTime.now());
+
+        // positive lock to prevent concurrent update
+        if (oldProject.getProjectUpdatedDate().isBefore(projectRepository.findByProjectId(id).get().getProjectUpdatedDate())) {
+            updateProject(oldProject, id, authentication);
+        }
         projectRepository.save(oldProject);
     }
 
