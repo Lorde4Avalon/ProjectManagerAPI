@@ -50,7 +50,7 @@ public class Project {
 
     @Column(name = "project_updated_date")
     //@Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project updated date must be in the format yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime projectUpdatedDate;
+    private LocalDateTime projectUpdatedDate = LocalDateTime.now();
 
     @Column(name = "project_end_date")
     //@Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "Project end date must be in the format yyyy-MM-dd HH:mm:ss")

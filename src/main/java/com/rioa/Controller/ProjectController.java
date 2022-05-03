@@ -53,8 +53,9 @@ public class ProjectController {
         // positive lock to prevent concurrent update
         if (oldProject.getProjectUpdatedDate().isBefore(projectRepository.findByProjectId(id).get().getProjectUpdatedDate())) {
             updateProject(oldProject, id, authentication);
+        } else {
+            projectRepository.save(oldProject);
         }
-        projectRepository.save(oldProject);
     }
 
     @DeleteMapping("/delete/{id}")

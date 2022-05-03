@@ -37,6 +37,9 @@ public class Task {
     @Column(name = "startTime")
     private LocalDateTime startTime = LocalDateTime.now();
 
+    @Column(name = "updateTime")
+    private LocalDateTime updateTime = LocalDateTime.now();
+
     @Column(name = "endTime")
     private LocalDateTime endTime;
 

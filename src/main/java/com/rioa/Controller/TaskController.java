@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -74,7 +75,14 @@ public class TaskController {
         Task oldTask = taskRepository.findById(id).get();
 
         oldTask.copyOf(task);
-        taskRepository.save(oldTask);
+        oldTask.setUpdateTime(LocalDateTime.now());
+
+        // positive lock to prevent concurrent update
+        if (oldTask.getUpdateTime().isBefore(taskRepository.findById(id).get().getUpdateTime())) {
+            updateTask(id, projectId, task, authentication);
+        } else {
+            taskRepository.save(oldTask);
+        }
     }
 
     @GetMapping("/get/{id}")
@@ -83,7 +91,7 @@ public class TaskController {
         if (taskRepository.findById(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        var task = taskRepository.findById(id).get();
+        Task task = taskRepository.findById(id).get();
         // Check if the user is the project manager or the task Owner or a user of the task
         if (!(
                 Objects.equals(task.getTaskOwner().getUserId(), authenticateUser.getUserId()) ||
