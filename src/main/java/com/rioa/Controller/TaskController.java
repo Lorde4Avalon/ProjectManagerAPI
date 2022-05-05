@@ -79,7 +79,7 @@ public class TaskController {
 
         // positive lock to prevent concurrent update
         if (oldTask.getUpdateTime().isBefore(taskRepository.findById(id).get().getUpdateTime())) {
-            updateTask(id, projectId, task, authentication);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Task is being updated by another user");
         } else {
             taskRepository.save(oldTask);
         }

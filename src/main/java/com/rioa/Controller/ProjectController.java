@@ -52,7 +52,7 @@ public class ProjectController {
 
         // positive lock to prevent concurrent update
         if (oldProject.getProjectUpdatedDate().isBefore(projectRepository.findByProjectId(id).get().getProjectUpdatedDate())) {
-            updateProject(oldProject, id, authentication);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Project is already updated");
         } else {
             projectRepository.save(oldProject);
         }
