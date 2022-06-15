@@ -14,7 +14,10 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "project")
+@Table(name = "project",
+        indexes = {
+        @Index(name = "find_index", columnList = "project_manager_id, invite_code")
+        })
 public class Project {
     @Id
     @Column(name = "projectId")
@@ -33,7 +36,6 @@ public class Project {
     @Column(name = "project_status")
     private String projectStatus;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_manager_id", nullable = false)
     private User projectManager;

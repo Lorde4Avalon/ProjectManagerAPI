@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com</groupId>
-    <artifactId>rioa</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>rioa-dev</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
     <name>pm</name>
     <description>pm</description>
     <properties>
