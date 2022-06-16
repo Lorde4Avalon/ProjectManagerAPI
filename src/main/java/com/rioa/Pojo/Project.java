@@ -59,7 +59,7 @@ public class Project {
     private LocalDateTime projectEndDate;
 
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinTable(name = "project_user",
             joinColumns = @JoinColumn(name = "projectId"),
             inverseJoinColumns = @JoinColumn(name = "userId"))
@@ -71,15 +71,9 @@ public class Project {
     private List<Task> tasks;
 
     public void copyOf(Project project) {
-        this.projectId = project.getProjectId();
         this.projectName = project.getProjectName();
         this.projectDescription = project.getProjectDescription();
         this.projectStatus = project.getProjectStatus();
         this.projectEndDate = project.getProjectEndDate();
-        this.projectManager = project.getProjectManager();
-        this.projectCreatedDate = project.getProjectCreatedDate();
-        this.projectUpdatedDate = project.getProjectUpdatedDate();
-        this.users = project.getUsers();
-        this.tasks = project.getTasks();
     }
 }

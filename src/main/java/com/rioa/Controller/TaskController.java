@@ -46,8 +46,11 @@ public class TaskController {
         }
 
         task.setTaskOwner(authenticateUser);
-        task.getUsers().add(authenticateUser);
         task.setProject(project.get());
+        Set<User> users = task.getUsers();
+        users.add(authenticateUser);
+        task.setUsers(users);
+
         taskRepository.save(task);
         return Collections.singletonMap("task_id", task.getTaskId());
     }
@@ -86,7 +89,7 @@ public class TaskController {
     }
 
     @GetMapping("/get/{id}")
-    private Task getTaskById(@PathVariable Long id, Authentication authentication) {
+    public Task getTaskById(@PathVariable Long id, Authentication authentication) {
         User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
         if (taskRepository.findById(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -105,7 +108,7 @@ public class TaskController {
 
     //get all tasks of a project
     @GetMapping("/get/all")
-    private List<Task> getTaskByProjectId(@RequestParam Long projectId, Authentication authentication) {
+    public List<Task> getTaskByProjectId(@RequestParam Long projectId, Authentication authentication) {
         User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
         if (projectRepository.findById(projectId).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
@@ -122,10 +125,10 @@ public class TaskController {
     }
 
     @DeleteMapping("/delete/{id}")
-    private void deleteTask(@PathVariable Long id,
+    public void deleteTask(@PathVariable Long id,
                             Authentication authentication) {
         if (taskRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
         }
         User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
         Task oldTask = taskRepository.findById(id).get();

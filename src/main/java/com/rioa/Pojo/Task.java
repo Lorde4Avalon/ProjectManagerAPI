@@ -29,9 +29,6 @@ public class Task {
     @Column(name = "status")
     private String status;
 
-//    @Column(name = "afterId")
-//    private Long afterTask;
-
 
     //timeline
     @Column(name = "startTime")
@@ -48,7 +45,7 @@ public class Task {
     private String description;
 
 
-    @ManyToMany(cascade = CascadeType.DETACH , fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinTable(
             name = "task_user",
             joinColumns = @JoinColumn(name = "task_id"),
@@ -72,11 +69,7 @@ public class Task {
     public void copyOf(Task task) {
         this.taskName = task.getTaskName();
         this.status = task.getStatus();
-        this.description = task.getDescription();
-        this.startTime = task.getStartTime();
+        this.description = task.getDescription();;
         this.endTime = task.getEndTime();
-        this.users = task.getUsers();
-        this.taskOwner = task.getTaskOwner();
-        this.project = task.getProject();
     }
 }
