@@ -65,9 +65,11 @@ public class ProjectController {
         }
 
         Project project = projectRepository.findByProjectId(id).get();
+
         if (!project.getProjectManager().equals(userRepository.findByUsername(authentication.getName()).get())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to delete this project");
         }
+
         projectRepository.deleteById(id);
     }
 
@@ -96,7 +98,7 @@ public class ProjectController {
 
         User authenticatedUser = userRepository.findByUsername(authentication.getName()).get();
 
-        return projectRepository.findAllByProjectManagerOrUsers(authenticatedUser, authenticatedUser);
+        return projectRepository.findDistinctByProjectManagerOrUsers(authenticatedUser, authenticatedUser);
     }
 
     //get all manage project
@@ -130,7 +132,7 @@ public class ProjectController {
 //    }
 
     //invite user
-    @PostMapping("/get/invite/{id}")
+    @PostMapping("/invite/{id}")
     public void inviteUser(@PathVariable Long id, @RequestParam String username, Authentication authentication) {
         if (projectRepository.findByProjectId(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
@@ -153,7 +155,7 @@ public class ProjectController {
     }
 
     //invite user by invite code
-    @PostMapping("/get/invite/code")
+    @PostMapping("/invite/code")
     public void inviteUserByInviteCode(@RequestParam String inviteCode, Authentication authentication) {
         if (projectRepository.findByInviteCode(inviteCode).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
@@ -169,7 +171,7 @@ public class ProjectController {
     }
 
     //delete invite user
-    @DeleteMapping("/get/invite/{id}")
+    @DeleteMapping("/invite/{id}")
     public void deleteInviteUser(@PathVariable Long id, @RequestParam String username, Authentication authentication) {
         if (projectRepository.findByProjectId(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");

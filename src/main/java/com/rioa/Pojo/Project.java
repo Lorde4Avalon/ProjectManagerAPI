@@ -41,7 +41,6 @@ public class Project {
     private User projectManager;
 
     @Column(name = "invite_code")
-    @JsonIgnore
     private String inviteCode = UUID.randomUUID().toString().substring(0, 6);
 
 

@@ -41,7 +41,7 @@ public class TaskController {
         }
 
         if (!Objects.equals(project.get().getProjectManager().getUserId(), authenticateUser.getUserId())
-        || !project.get().getUsers().contains(authenticateUser)) {
+        && !project.get().getUsers().contains(authenticateUser)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to add task to this project");
         }
 
@@ -65,10 +65,11 @@ public class TaskController {
         }
         User projectManager = projectRepository.findById(projectId).get().getProjectManager();
         User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
+
+        Project project = projectRepository.findById(projectId).get();
         // Check if the user is the project manager or the task Owner
         if (!(  Objects.equals(projectManager.getUserId(), authenticateUser.getUserId()) ||
-                Objects.equals(task.getTaskOwner().getUserId(), authenticateUser.getUserId())
-        )) {
+                project.getUsers().contains(authenticateUser))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to update this task");
         }
 
