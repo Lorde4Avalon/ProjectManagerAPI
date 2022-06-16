@@ -150,4 +150,36 @@ public class TaskController {
 
         return new ArrayList<>(task.getUsers());
     }
+
+    //add user to task
+    @PostMapping("/add/user/{id}")
+    public void addUserToTask(@PathVariable Long id,
+                              @RequestParam Long userId,
+                              Authentication authentication) {
+        if (taskRepository.findById(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+
+        }
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        Task task = taskRepository.findById(id).get();
+        User user = userRepository.findById(userId).get();
+        User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
+
+        // Check if the user is the project manager or the task Owner
+        if (!( Objects.equals(task.getTaskOwner().getUserId(), authenticateUser.getUserId()) ||
+                Objects.equals(task.getProject().getProjectManager().getUserId(), authenticateUser.getUserId())
+        )) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to add user to this task");
+        }
+
+        // Check if the user is already in the task
+        if (task.getUsers().contains(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is already in the task");
+        }
+
+        task.getUsers().add(user);
+        taskRepository.save(task);
+    }
 }

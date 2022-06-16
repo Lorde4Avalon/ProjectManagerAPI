@@ -35,7 +35,7 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate", "/register").permitAll()
+                .authorizeRequests().antMatchers("/api/authenticate", "/api/register").permitAll()
                 // all other requests need to be authenticated
                 .antMatchers("/test/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
