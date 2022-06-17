@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -108,4 +109,8 @@ public class UserController {
         return imageBytes;
     }
 
+    @GetMapping("/user/get/all")
+    List<User> getAllUser() {
+        return userRepository.findDistinct();
+    }
 }

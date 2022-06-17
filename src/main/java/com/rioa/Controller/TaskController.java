@@ -69,7 +69,7 @@ public class TaskController {
         Project project = projectRepository.findById(projectId).get();
         // Check if the user is the project manager or the task Owner
         if (!(  Objects.equals(projectManager.getUserId(), authenticateUser.getUserId()) ||
-                project.getUsers().contains(authenticateUser))) {
+                Objects.equals(taskRepository.findById(id).get().getTaskOwner(), authenticateUser))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to update this task");
         }
 
