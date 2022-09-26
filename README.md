@@ -10,7 +10,6 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - spring security
 - mysql
 - docker
-- Redis
 - JWT
 
 ## Database E-R graphic
