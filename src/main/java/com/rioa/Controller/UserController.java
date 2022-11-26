@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -108,4 +110,12 @@ public class UserController {
         return imageBytes;
     }
 
+    @GetMapping("/get/all")
+    List<String> getAllUserName() {
+        List<String> usernames = new LinkedList<>();
+        userRepository.findAll().forEach(user -> {
+            usernames.add(user.getUsername());
+        });
+        return usernames;
+    }
 }

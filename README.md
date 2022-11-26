@@ -1,15 +1,15 @@
-# ProjectManager
+# ProjectManagerAPI
 ## Target
 It can sync multi users tasks at the same time.
 A manager can assgin different tasks for his teammates. And can supervise their process clearly and immediately.<br>
 **Only for learning**
 
 ## Tech Stacks
+- REST API
 - springboot
 - spring security
 - mysql
 - docker
-- Redis
 - JWT
 
 ## Database E-R graphic
