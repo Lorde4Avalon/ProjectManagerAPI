@@ -1,4 +1,4 @@
-package com.murmur.murmur.config.respond
+package com.rioa.configurer.respond
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired

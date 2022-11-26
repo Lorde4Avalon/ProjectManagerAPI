@@ -1,7 +1,5 @@
-package com.rioa.Configurer.respond;
+package com.rioa.configurer.respond;
 
-import com.murmur.murmur.config.respond.ResponseCode;
-import com.murmur.murmur.config.respond.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;

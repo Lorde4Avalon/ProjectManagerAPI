@@ -1,4 +1,4 @@
-package com.murmur.murmur.config.respond
+package com.rioa.configurer.respond
 
 data class ResponseData<T> (
     val status: Int,

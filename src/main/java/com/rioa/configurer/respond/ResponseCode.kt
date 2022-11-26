@@ -1,4 +1,4 @@
-package com.murmur.murmur.config.respond
+package com.rioa.configurer.respond
 
 enum class ResponseCode(val code: Int,val message: String) {
     SUCCESS(200, "Success"),

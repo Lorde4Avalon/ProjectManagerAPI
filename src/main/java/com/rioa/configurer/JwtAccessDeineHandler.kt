@@ -1,4 +1,4 @@
-package com.murmur.murmur.filter
+package com.rioa.configurer
 
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.web.access.AccessDeniedHandler

@@ -1,4 +1,4 @@
-package com.rioa.Configurer;
+package com.rioa.configurer;
 
 import com.rioa.Service.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;

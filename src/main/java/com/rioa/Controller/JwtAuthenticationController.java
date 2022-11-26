@@ -1,6 +1,6 @@
 package com.rioa.Controller;
 
-import com.rioa.Configurer.JwtTokenUtil;
+import com.rioa.configurer.JwtTokenUtil;
 import com.rioa.Pojo.UserDTO;
 import com.rioa.Service.UserDetailsServiceImpl;
 import com.rioa.dao.UserRepository;

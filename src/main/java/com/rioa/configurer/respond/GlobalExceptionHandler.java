@@ -1,7 +1,5 @@
-package com.rioa.Configurer.respond;
+package com.rioa.configurer.respond;
 
-import com.murmur.murmur.config.respond.ResponseCode;
-import com.murmur.murmur.config.respond.ResponseData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;

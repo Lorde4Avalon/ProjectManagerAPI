@@ -1,4 +1,4 @@
-package com.murmur.murmur.config.respond
+package com.rioa.configurer.respond
 
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order

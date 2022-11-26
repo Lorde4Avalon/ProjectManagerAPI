@@ -1,4 +1,4 @@
-package com.rioa.Configurer;
+package com.rioa.configurer;
 
 import java.io.Serializable;
 import java.util.Date;
