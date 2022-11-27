@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: pro
   main:
     allow-circular-references: true
 
