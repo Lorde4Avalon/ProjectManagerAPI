@@ -1,6 +1,7 @@
 package com.rioa.Controller;
 
 import com.rioa.Pojo.Project;
+import com.rioa.Pojo.ProjectSet;
 import com.rioa.Pojo.User;
 import com.rioa.dao.ProjectRepository;
 import com.rioa.dao.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -71,6 +73,12 @@ public class ProjectController {
         }
 
         projectRepository.deleteById(id);
+    }
+
+    @DeleteMapping("/delete/multi")
+    public void deleteMultiProjects(@RequestBody ProjectSet projectSet, Authentication authentication) {
+        List<Long> projectIdList = projectSet.getProjectIdList();
+        projectIdList.forEach(id -> this.deleteProject(id, authentication));
     }
 
     @GetMapping("/get/{id}")
@@ -211,5 +219,4 @@ public class ProjectController {
 
         return users;
     }
-
 }
