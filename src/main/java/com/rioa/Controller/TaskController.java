@@ -2,6 +2,7 @@ package com.rioa.Controller;
 
 import com.rioa.Pojo.Project;
 import com.rioa.Pojo.Task;
+import com.rioa.Pojo.TaskSet;
 import com.rioa.Pojo.User;
 import com.rioa.dao.ProjectRepository;
 import com.rioa.dao.TaskRepository;
@@ -142,6 +143,12 @@ public class TaskController {
         }
 
         taskRepository.deleteById(id);
+    }
+
+    @DeleteMapping("/delete/multi")
+    public void deleteMultiTasks(@RequestBody TaskSet taskSet, Authentication authentication) {
+        List<Long> taskIdList = taskSet.getTaskIdList();
+        taskIdList.forEach(id -> this.deleteTask(id, authentication));
     }
 
     //get all users of a task
