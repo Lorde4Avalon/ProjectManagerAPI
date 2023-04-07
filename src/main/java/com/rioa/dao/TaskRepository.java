@@ -13,4 +13,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Optional<Task> findByTaskId(Long id);
     //find all tasks by project
     List<Task> findAllByProject(Project project);
+    List<Task> findAllByTaskOwner(User user);
 }

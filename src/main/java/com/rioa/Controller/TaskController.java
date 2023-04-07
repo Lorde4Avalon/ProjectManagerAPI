@@ -126,6 +126,23 @@ public class TaskController {
         return taskRepository.findAllByProject(project);
     }
 
+    //get all tasks of the projects the user is in by user id
+    @GetMapping("/get/all/user")
+    public List<Task> getTaskByUserId(Authentication authentication) {
+        User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
+        // get all tasks of the projects the user is in
+        List<Task> tasks = new ArrayList<>();
+        Set<User> users = new HashSet<>();
+        users.add(authenticateUser);
+        List<Project> projects = projectRepository.findAllByUsers(users);
+        for (Project project : projects) {
+            tasks.addAll(taskRepository.findAllByProject(project));
+        }
+        return tasks;
+    }
+    
+
+
     @DeleteMapping("/delete/{id}")
     public void deleteTask(@PathVariable Long id,
                             Authentication authentication) {

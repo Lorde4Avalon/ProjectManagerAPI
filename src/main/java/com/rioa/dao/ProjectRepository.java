@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> findByProjectId(Long projectId);
+    List<Project> findAllByUsers(Set<User> users);
     List<Project> findDistinctByProjectManagerOrUsers(User manager, User user);
     Optional<Project> findByInviteCode(String inviteCode);
     List<Project> findAllByProjectManager(User manager);
