@@ -11,7 +11,8 @@ import java.util.Set;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> findByProjectId(Long projectId);
-    List<Project> findAllByUsers(Set<User> users);
+    //find all projects by user
+    List<Project> findAllByUsers(User user);
     List<Project> findDistinctByProjectManagerOrUsers(User manager, User user);
     Optional<Project> findByInviteCode(String inviteCode);
     List<Project> findAllByProjectManager(User manager);

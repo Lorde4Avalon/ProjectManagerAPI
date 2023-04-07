@@ -58,25 +58,23 @@ public class TaskController {
 
     @PutMapping("/update/{id}")
     public void updateTask(@PathVariable Long id,
-                           @RequestParam Long projectId,
                            @Valid @RequestBody Task task,
                            Authentication authentication) {
-        if (projectRepository.findById(projectId).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
+        if (taskRepository.findById(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
         }
+
+        Long projectId = taskRepository.findById(id).get().getProject().getProjectId();
+
         User projectManager = projectRepository.findById(projectId).get().getProjectManager();
         User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
 
-        Project project = projectRepository.findById(projectId).get();
         // Check if the user is the project manager or the task Owner
         if (!(  Objects.equals(projectManager.getUserId(), authenticateUser.getUserId()) ||
                 Objects.equals(taskRepository.findById(id).get().getTaskOwner(), authenticateUser))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to update this task");
         }
 
-        if (taskRepository.findById(id).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
-        }
         Task oldTask = taskRepository.findById(id).get();
 
         oldTask.copyOf(task);
@@ -132,9 +130,8 @@ public class TaskController {
         User authenticateUser = userRepository.findByUsername(authentication.getName()).get();
         // get all tasks of the projects the user is in
         List<Task> tasks = new ArrayList<>();
-        Set<User> users = new HashSet<>();
-        users.add(authenticateUser);
-        List<Project> projects = projectRepository.findAllByUsers(users);
+
+        List<Project> projects = projectRepository.findAllByUsers(authenticateUser);
         for (Project project : projects) {
             tasks.addAll(taskRepository.findAllByProject(project));
         }
