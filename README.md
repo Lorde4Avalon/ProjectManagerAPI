@@ -21,4 +21,3 @@ A manager can assgin different tasks for his teammates. And can supervise their 
 - add Redis cache to implement user login forbidden time limitation
 - add logs
 - add swagger
-- add responeEntity
